@@ -2,9 +2,7 @@ t = ula
 
 compile:
 	@mkdir -p waves
-	
-	ghdl -a -fsynopsys --std=08 bits1adder.vhd
-	ghdl -a -fsynopsys --std=08 bits16adder.vhd
+
 	ghdl -a -fsynopsys --std=08 ula.vhd
 
 	ghdl -a -fsynopsys --std=08 test/$(t)_tb.vhd 
