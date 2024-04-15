@@ -22,7 +22,7 @@ architecture testbench of ula_tb is
     signal data1_in, data2_in, data3_out : unsigned (15 downto 0);
     signal carry, overflow : std_logic;
     signal sel_op : unsigned (1 downto 0);
-
+    
 begin 
     ula01: ula port map (
         data1_in => data1_in,
@@ -41,31 +41,51 @@ begin
         wait for 5 ns;
         data1_in <= "0000000000000000";
         data2_in <= "0000000000000001";
-        sel_op <= "01";
+        sel_op <= "01"; 
         wait for 5 ns;
         data1_in <= "0000000000000000";
         data2_in <= "0000000000000001";
-        sel_op <= "10";
+        sel_op <= "10"; 
         wait for 5 ns;
         data1_in <= "0000000000000000";
         data2_in <= "0000000000000001";
-        sel_op <= "11";
+        sel_op <= "11"; 
         wait for 5 ns;
         data1_in <= "0000000000000111";
         data2_in <= "0000000000000111";
-        sel_op <= "00";
+        sel_op <= "00"; 
         wait for 5 ns;
         data1_in <= "0000000000000111";
         data2_in <= "0000000000000111";
-        sel_op <= "01";
+        sel_op <= "01"; 
         wait for 5 ns;
         data1_in <= "0000000000000111";
         data2_in <= "0000000000000111";
-        sel_op <= "10";
+        sel_op <= "10"; 
         wait for 5 ns;
         data1_in <= "0000000000000111";
         data2_in <= "0000000000000111";
-        sel_op <= "11";
+        sel_op <= "11"; 
+        wait for 5 ns;
+        data1_in <= "0000000000000111";
+        data2_in <= "0000000000000111";
+        sel_op <= "10"; 
+        wait for 5 ns;
+        data1_in <= "1111111111111111";
+        data2_in <= "1111111111111111";
+        sel_op <= "00"; 
+        wait for 5 ns;
+        data1_in <= "1111111111111111";
+        data2_in <= "1111111111111111";
+        sel_op <= "01"; 
+        wait for 5 ns;
+        data1_in <= "1111111111111111";
+        data2_in <= "1111111111111111";
+        sel_op <= "10"; 
+        wait for 5 ns;
+        data1_in <= "1111111111111111";
+        data2_in <= "1111111111111111";
+        sel_op <= "11"; 
         wait for 5 ns;
     end process;
     end testbench;
