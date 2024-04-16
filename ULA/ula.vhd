@@ -31,14 +31,12 @@ begin
                     (data1_in and data2_in) when sel_op="11" else  -- and.
                     "0000000000000000";
     
-    -- carry (quando a operação é de subtração o carry é 1 se data2_in > data1_in, 0 caso contrário)
-    carry <=    sum_temp(16) when sel_op = "00"                          else
-                '0'          when sel_op = "01" and data2_in <= data1_in else
-                '1'          when sel_op = "01" and data2_in > data1_in  else
-                '0';
+    -- carry
+    carry <= sum_temp(16);
 
     -- overflow
-    overflow <= '1' when sel_op = "00" and sum_temp(16) = '1' else
+    overflow <= '1' when sel_op = "00" and data1_in(15) = '0' and data2_in(15) = '0' and sum_temp(15) = '1' else
+                '1' when sel_op = "00" and data1_in(15) = '1' and data2_in(15) = '1' and sum_temp(15) = '0' else
                 '1' when sel_op = "01" and data1_in(15) = '0' and data2_in(15) = '1' and sub_temp(15) = '1' else
                 '1' when sel_op = "01" and data1_in(15) = '1' and data2_in(15) = '0' and sub_temp(15) = '0' else
                 '0';
