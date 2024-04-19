@@ -3,9 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity register_bank is
-   port( clk            : in  std_logic; 
-         rst            : in  std_logic; 
-         wr_en          : in  std_logic; 
+   port( clk, rst, wr_en: in  std_logic; 
          data_in        : in  unsigned(15 downto 0);
          selin_reg      : in  unsigned(2 downto 0);
          selout_reg     : in  unsigned(2 downto 0);
@@ -36,14 +34,13 @@ signal wr_en6: std_logic;
 signal wr_en7: std_logic;
 
 signal saida_reg0: unsigned(15 downto 0);
-signal saida_reg1: unsigned(15 downto 0); -- registrador responsável pelo acumulador.
+signal saida_reg1: unsigned(15 downto 0); --acumulador.
 signal saida_reg2: unsigned(15 downto 0);
 signal saida_reg3: unsigned(15 downto 0);
 signal saida_reg4: unsigned(15 downto 0);
 signal saida_reg5: unsigned(15 downto 0);
 signal saida_reg6: unsigned(15 downto 0);
 signal saida_reg7: unsigned(15 downto 0);
-
 
       begin 
       reg0: reg16bits port map (clk => clk, rst => rst, wr_en => '0', data_in => "0000000000000000",   data_out => saida_reg0); 
