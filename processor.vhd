@@ -62,9 +62,9 @@ signal regbank_out:        unsigned(15 downto 0);
 signal mux_cte_regs_out:   unsigned(15 downto 0);
 signal mux_cte_ula_out:    unsigned(15 downto 0);
 signal acumulador_out:     unsigned(15 downto 0);
--- signal regbank_out_02: unsigned(15 downto 0); 
 
    begin
+   -- Mux para selecionar entre constante e saida do banco de regs.
    p_mux_cte_regs: mux port map (
       a => cte,
       b => regbank_out,
@@ -72,6 +72,7 @@ signal acumulador_out:     unsigned(15 downto 0);
       c => mux_cte_regs_out
    );
 
+   -- Mux para selecionar entre constante e saida da ULA
    p_mux_cte_ula: mux port map (
       a => cte, 
       b => ula_output,
@@ -89,6 +90,7 @@ signal acumulador_out:     unsigned(15 downto 0);
       data_out => regbank_out
    );
    
+   -- Tem como entrada um mux que seleciona entre a constante e a saida da ULA
    p_acumulador: acumulador port map (
       clk => clk,
       rst => rst,
@@ -97,6 +99,7 @@ signal acumulador_out:     unsigned(15 downto 0);
       acumulador_out => acumulador_out
    );
 
+   -- Uma das entradas da ULA é o acumulador, a outra um mux que seleciona entre o bando de regs. e a constante
    p_ula: ula port map (
       data1_in => mux_cte_regs_out,
       data2_in => acumulador_out,  --Uma entrada da ULA sempre é o acumulador 

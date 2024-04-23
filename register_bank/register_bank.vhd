@@ -70,8 +70,6 @@ signal saida_r7: unsigned(15 downto 0);
                   saida_r6 when selout_reg = "110" else 
                   saida_r7;
 
-      -- acc_out <= saida_reg1;
-
       end struct;
 
 
