@@ -39,12 +39,12 @@ port(    clk, rst, wr_en: in  std_logic;
 end component;
 
 -- component
-component acumulador is
+component acumulator is
 port( clk      : in std_logic;
       rst      : in std_logic;
       wr_en    : in std_logic;
-      acumulador_in  : in unsigned(15 downto 0);
-      acumulador_out : out unsigned(15 downto 0));
+      acumulator_in  : in unsigned(15 downto 0);
+      acumulator_out : out unsigned(15 downto 0));
 end component;
 
 --component
@@ -61,7 +61,7 @@ signal ula_overflow:       std_logic;
 signal regbank_out:        unsigned(15 downto 0);
 signal mux_cte_regs_out:   unsigned(15 downto 0);
 signal mux_cte_ula_out:    unsigned(15 downto 0);
-signal acumulador_out:     unsigned(15 downto 0);
+signal acumulator_out:     unsigned(15 downto 0);
 
    begin
    -- Mux para selecionar entre constante e saida do banco de regs.
@@ -91,18 +91,18 @@ signal acumulador_out:     unsigned(15 downto 0);
    );
    
    -- Tem como entrada um mux que seleciona entre a constante e a saida da ULA
-   p_acumulador: acumulador port map (
+   p_acumulator: acumulator port map (
       clk => clk,
       rst => rst,
       wr_en => wr_en,
-      acumulador_in => mux_cte_ula_out,
-      acumulador_out => acumulador_out
+      acumulator_in => mux_cte_ula_out,
+      acumulator_out => acumulator_out
    );
 
    -- Uma das entradas da ULA é o acumulador, a outra um mux que seleciona entre o bando de regs. e a constante
    p_ula: ula port map (
       data1_in => mux_cte_regs_out,
-      data2_in => acumulador_out,  --Uma entrada da ULA sempre é o acumulador 
+      data2_in => acumulator_out,  --Uma entrada da ULA sempre é o acumulador 
       sel_op => p_sel_op,
       data3_out => ula_output,
       carry => ula_carry, 

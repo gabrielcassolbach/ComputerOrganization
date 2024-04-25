@@ -12,18 +12,18 @@ entity reg16bits is
 end entity;
 
 architecture struct of reg16bits is 
-    signal registro: unsigned(15 downto 0);
+    signal values: unsigned(15 downto 0);
     begin
         process(clk,rst,wr_en) 
         begin                
             if rst='1' then
-                registro <= "0000000000000000";
+                values <= "0000000000000000";
             elsif wr_en='1' then
                 if rising_edge(clk) then
-                    registro <= data_in;
+                    values <= data_in;
                 end if;
             end if;
         end process;
     
-    data_out <= registro;  
+    data_out <= values;  
  end architecture;
