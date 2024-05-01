@@ -12,7 +12,7 @@ entity reg16bits is
 end entity;
 
 architecture struct of reg16bits is 
-    signal values: unsigned(15 downto 0);
+    signal values: unsigned(15 downto 0) := "0000000000000000";
     begin
         process(clk,rst,wr_en) 
         begin                
