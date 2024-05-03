@@ -9,21 +9,21 @@ architecture testbench of state_machine_tb is
     component state_machine is
         port (
             clk: in std_logic;
-            reset: in std_logic;
+            rst: in std_logic;
             state: out std_logic
         );
     end component state_machine;
 
     -- signals
     signal clk: std_logic;
-    signal reset: std_logic;
+    signal rst: std_logic;
     signal state: std_logic;
 
     begin
         -- instantiate the unit under test
         uut: state_machine port map (
             clk => clk,
-            reset => reset,
+            rst => rst,
             state => state
         );
 
