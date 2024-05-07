@@ -4,6 +4,7 @@ use ieee.numeric_std.all;
 
 entity adder is
     port(
+          increment : in unsigned  (6 downto 0);
           data_in  : in unsigned  (6 downto 0);
           data_out : out unsigned (6 downto 0)
     );
@@ -11,5 +12,5 @@ entity adder is
  
  architecture struct of adder is 
     begin
-        data_out <= data_in + 1;
+        data_out <= data_in + increment;
 end architecture;
