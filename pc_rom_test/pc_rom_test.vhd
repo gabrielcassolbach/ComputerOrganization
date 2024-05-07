@@ -5,7 +5,6 @@ use ieee.numeric_std.all;
 entity test is
     port (
         clk : in std_logic;
-        pc_wr : in std_logic;
         rst : in std_logic;
         cu_state : out std_logic;    -- for debugging
         test_data_rom_out : out unsigned(15 downto 0)

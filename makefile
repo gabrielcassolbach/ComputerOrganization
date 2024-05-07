@@ -1,4 +1,4 @@
-t = control_unit
+t = pc_rom_test
 
 compile:
 	@mkdir -p waves
