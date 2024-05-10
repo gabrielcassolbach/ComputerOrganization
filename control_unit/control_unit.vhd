@@ -11,6 +11,7 @@ entity control_unit is
         state       : out std_logic;                -- for debugging
         pc_wr       : out std_logic;
         ir_wr       : out std_logic;
+        reg_bank_wr : out std_logic;
         jump_sel    : out std_logic;                -- jump signal
         nop_sel     : out std_logic                 -- no operation signal
     );
@@ -43,11 +44,12 @@ architecture control_unit_a of control_unit is
         -- 11-0: to be defined ...
 
         -- decode step:
-        
+
 
         -- Output signals
-        pc_wr <= '1' when state_s = '10' else '0'; -- (trocar depois).
+        pc_wr <= '1' when state_s = '10' else '0';
         ir_wr <= '1' when state_s = '00' else '0';
+        reg_bank_out <= '1' when state_s = '10' else '0';
 
         jump_sel <= '1' when opcode = "1111" else '0'; -- inconditional jump (absolute)
         nop_sel  <= '1' when opcode = "0000" else '0'; -- no operation
