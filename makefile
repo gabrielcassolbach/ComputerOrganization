@@ -18,5 +18,5 @@ compile:
 	ghdl -r --std=08 $(t)_tb --wave=waves/$(t)_tb.ghw --stop-time=1ms
 
 	rm *.cf
-	
+
 	gtkwave waves/$(t)_tb.ghw

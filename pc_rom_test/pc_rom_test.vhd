@@ -6,8 +6,8 @@ entity test is
     port (
         clk : in std_logic;
         rst : in std_logic;
-        cu_state : out std_logic;    -- for debugging
-        rom_data_out : out unsigned(15 downto 0)
+        cu_state : out std_logic   -- for debugging
+        --rom_data_out : out unsigned(15 downto 0)
     );
 end entity test;
 
@@ -38,10 +38,20 @@ architecture test_a of test is
             opcode  : in unsigned(3 downto 0);
             state   : out std_logic;    -- for debugging
             pc_wr   : out std_logic;
+            ir_wr   : out std_logic;
             jump_sel: out std_logic;
             nop_sel : out std_logic
         );
     end component control_unit;
+
+    component instruction_register is
+        port( clk      : in std_logic;
+              rst      : in std_logic;
+              wr_en    : in std_logic;
+              data_in  : in unsigned(15 downto 0);
+              data_out : out unsigned(15 downto 0)
+        );
+     end component instruction_register;
     
     -- signal declarations
     
@@ -56,6 +66,8 @@ architecture test_a of test is
     signal rom_data_out_s: unsigned(15 downto 0);
     signal opcode_s: unsigned(3 downto 0);
     signal instruction_address_s: unsigned(6 downto 0);
+    -- instruction register signals:
+    signal ir_out_s: unsigned (15 downto 0);
     
 begin
     -- component instantiation
@@ -84,15 +96,24 @@ begin
             data => rom_data_out_s
         );
 
+    i_reg : instruction_register 
+        port map (
+            clk => clk,
+            rst => rst,
+            wr_en => ir_wr,
+            data_in  => rom_data_out_s,
+            data_out => ir_out_s,
+        );
+
     -- rom instrucion partition
-    opcode_s <= rom_data_out_s(15 downto 12);
-    instruction_address_s <= rom_data_out_s(6 downto 0);
+    opcode_s <= ir_out_s(15 downto 12);
+    instruction_address_s <= ir_out_s(6 downto 0);
 
     -- pc increment calculation
     pc_increment_s <=   "0000001" when (jump_sel_s = '0' or nop_sel_s = '1') else               --logic on this line will change when more instructions are added
                         (instruction_address_s - pc_adress_out_s) when jump_sel_s = '1' else
                         "0000001";                                                              --default increment (may change later on)
 
-    rom_data_out <= rom_data_out_s;
+    --rom_data_out <= rom_data_out_s;
     
 end architecture test_a;

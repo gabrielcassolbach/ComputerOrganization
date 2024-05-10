@@ -10,6 +10,7 @@ entity control_unit is
         opcode      : in unsigned(3 downto 0);      -- opcode from instruction memory (ROM)
         state       : out std_logic;                -- for debugging
         pc_wr       : out std_logic;
+        ir_wr       : out std_logic;
         jump_sel    : out std_logic;                -- jump signal
         nop_sel     : out std_logic                 -- no operation signal
     );
@@ -41,8 +42,12 @@ architecture control_unit_a of control_unit is
         -- 15-12: opcode
         -- 11-0: to be defined ...
 
+        -- decode step:
+        
+
         -- Output signals
-        pc_wr <= '1' when state_s = '1' else '0';
+        pc_wr <= '1' when state_s = '10' else '0'; -- (trocar depois).
+        ir_wr <= '1' when state_s = '00' else '0';
 
         jump_sel <= '1' when opcode = "1111" else '0'; -- inconditional jump (absolute)
         nop_sel  <= '1' when opcode = "0000" else '0'; -- no operation
