@@ -6,7 +6,7 @@ entity tmp is
     port (
         clk           : in std_logic;
         rst           : in std_logic;
-        state_out         : out unsigned (1 downto 0);   
+        state_out     : out unsigned (1 downto 0);   
         pc_out        : out unsigned (6 downto 0);
         ir_out        : out unsigned(15 downto 0);
         rgbank_out    : out unsigned(15 downto 0);
@@ -113,13 +113,38 @@ architecture tmp_a of tmp is
     -- instruction register signals:
     signal ir_out_s: unsigned (15 downto 0);
 
+    -- mux between constant and register bank signals
+    signal mux_cte_regs_input_a_s: unsigned(15 downto 0);
+    signal mux_cte_regs_input_b_s: unsigned(15 downto 0);
+    signal mux_cte_regs_output_s: unsigned(15 downto 0);
+
+    -- mux between constant and ula output signals
+    signal mux_cte_ula_input_a_s: unsigned(15 downto 0);
+    signal mux_cte_ula_input_b_s: unsigned(15 downto 0);
+    signal mux_cte_ula_output_s: unsigned(15 downto 0);
+    
+    -- register bank signals
+    signal selin_reg_s: unsigned(2 downto 0);
+    signal selout_reg_s: unsigned(2 downto 0);
+
+    -- acumulator signals
+    signal acc_in_s: unsigned(15 downto 0);
+    signal acc_rst_s: std_logic;
+    signal acc_wr_en_s: std_logic;
+    signal acc_out_s: unsigned(15 downto 0);
+
+    -- ula signals
+    signal ula_sel_op_s: unsigned(1 downto 0);
+    signal ula_carry_s: std_logic;
+    signal ula_overflow_s: std_logic;
+
     -- component instantiation
     cu : control_unit
         port map (
             clk => clk,
             rst => rst,
             opcode => opcode_s,
-            state => state_out,
+            state => state_out,             -- state machine is inside control unit
             pc_wr => pc_wr_s,
             ir_wr => ir_wr_s,
             reg_bank_wr => reg_bank_wr_s,
@@ -130,9 +155,9 @@ architecture tmp_a of tmp is
     pc : program_counter
         port map (
             clk => clk,
-            wr_en => pc_wr_s,
+            wr_en => pc_wr_s,               -- controled by control unit
             rst => rst,
-            increment => pc_increment_s,
+            increment => pc_increment_s,    -- controled on this file logic
             data_out => pc_adress_out_s
         );
 
@@ -147,7 +172,7 @@ architecture tmp_a of tmp is
         port map (
             clk => clk,
             rst => rst,
-            wr_en => ir_wr_s,
+            wr_en => ir_wr_s,               -- controled by control unit
             data_in  => rom_data_out_s,
             data_out => ir_out_s,
         );
@@ -155,51 +180,51 @@ architecture tmp_a of tmp is
      -- Mux para selecionar entre constante e saida do banco de regs.
     p_mux_cte_regs : mux 
         port map (
-            a => ,
-            b => ,
-            control_signal => , 
-            c => 
+            a => mux_cte_regs_input_a_s,    -- cte 
+            b => mux_cte_regs_input_b_s,    -- register bank output
+            control_signal => ,             -- selected by instruction
+            c => mux_cte_regs_output_s
         );
 
     -- Mux para selecionar entre constante e saida da ULA
     p_mux_cte_ula: mux 
         port map (
-            a => , 
-            b => ,
-            control_signal => , 
-            c => 
+            a => mux_cte_ula_input_a_s,    -- cte 
+            b => mux_cte_ula_input_b_s,    -- ula output
+            control_signal => ,            -- selected by instruction
+            c => mux_cte_ula_output_s
         );
  
     p_regbank: register_bank 
         port map (
             clk => clk, 
             rst => rst, 
-            wr_en => reg_bank_wr_s, 
-            data_in => ,            -- Saida do acc 
-            selin_reg => ,
-            selout_reg => , 
-            data_out => 
+            wr_en => reg_bank_wr_s,             -- controlled by control unit (not implemented yet)
+            data_in => acc_out_s,               -- acc output 
+            selin_reg => selin_reg_s,           -- selected by instruction
+            selout_reg => selout_reg_s,         -- selected by instruction    
+            data_out => mux_cte_regs_input_b_s             
         );
     
     -- Tem como entrada um mux que seleciona entre a constante e a saida da ULA
     p_acumulator: acumulator 
         port map (
             clk => clk,
-            rst => ,
-            wr_en => ,
-            acumulator_in => ,
-            acumulator_out => 
+            rst => acc_rst_s,                       -- controled by control unit (not implemented yet)
+            wr_en => acc_wr_en_s,                   -- controled by control unit (not implemented yet)
+            acumulator_in => mux_cte_ula_output_s,     
+            acumulator_out => acc_out_s
         );
 
     -- Uma das entradas da ULA é o acumulador, a outra um mux que seleciona entre o bando de regs. e a constante
     p_ula: ula 
         port map (
-            data1_in => ,
-            data2_in => ,  --Uma entrada da ULA sempre é o acumulador 
-            sel_op => ,
-            data3_out => ,
-            carry => , 
-            overflow => 
+            data1_in => mux_cte_regs_output_s,
+            data2_in => acc_out_s, 
+            sel_op => ula_sel_op_s                  -- selected by instruction
+            data3_out => mux_cte_ula_input_b_s,                      
+            carry => ula_carry_s,                   -- no use for now (maybe)
+            overflow => ula_overflow_s              -- no use for now (maybe)
         );
     
     -- Logic
