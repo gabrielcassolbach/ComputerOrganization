@@ -43,10 +43,12 @@ architecture tmp_a of tmp is
             clk     : in std_logic;
             rst     : in std_logic;
             opcode  : in unsigned(3 downto 0);
-            state   : out std_logic;    -- for debugging
+            state   : out  unsigned(1 downto 0);    -- for debugging
             pc_wr   : out std_logic;
             ir_wr   : out std_logic;
             reg_bank_wr : out std_logic;
+            acc_in_sel  : out std_logic;
+            ula_in_sel  : out std_logic;
             jump_sel: out std_logic;
             nop_sel : out std_logic
         );
@@ -101,9 +103,11 @@ architecture tmp_a of tmp is
     -- control unit signals
     signal pc_wr_s: std_logic;
     signal ir_wr_s: std_logic;
-    signal reg_bank_wr_s: std_logic
+    signal reg_bank_wr_s: std_logic;
     signal jump_sel_s: std_logic;
     signal nop_sel_s: std_logic;
+    signal acc_in_sel_s: std_logic;
+    signal ula_in_sel_s: std_logic;
 
     -- instruction partition signals (missing a lot of signals here)
     signal rom_data_out_s: unsigned(15 downto 0);
@@ -138,6 +142,8 @@ architecture tmp_a of tmp is
     signal ula_carry_s: std_logic;
     signal ula_overflow_s: std_logic;
 
+    begin
+
     -- component instantiation
     cu : control_unit
         port map (
@@ -148,6 +154,8 @@ architecture tmp_a of tmp is
             pc_wr => pc_wr_s,
             ir_wr => ir_wr_s,
             reg_bank_wr => reg_bank_wr_s,
+            acc_in_sel => acc_in_sel_s,
+            ula_in_sel => ula_in_sel_s,
             jump_sel => jump_sel_s,                
             nop_sel => nop_sel_s
         );
@@ -174,7 +182,7 @@ architecture tmp_a of tmp is
             rst => rst,
             wr_en => ir_wr_s,               -- controled by control unit
             data_in  => rom_data_out_s,
-            data_out => ir_out_s,
+            data_out => ir_out_s
         );
     
      -- Mux para selecionar entre constante e saida do banco de regs.
@@ -182,7 +190,7 @@ architecture tmp_a of tmp is
         port map (
             a => mux_cte_regs_input_a_s,    -- cte 
             b => mux_cte_regs_input_b_s,    -- register bank output
-            control_signal => ,             -- selected by instruction
+            control_signal => ula_in_sel_s,   -- selected by instruction
             c => mux_cte_regs_output_s
         );
 
@@ -191,7 +199,7 @@ architecture tmp_a of tmp is
         port map (
             a => mux_cte_ula_input_a_s,    -- cte 
             b => mux_cte_ula_input_b_s,    -- ula output
-            control_signal => ,            -- selected by instruction
+            control_signal => acc_in_sel_s,  -- selected by instruction
             c => mux_cte_ula_output_s
         );
  
@@ -216,12 +224,12 @@ architecture tmp_a of tmp is
             acumulator_out => acc_out_s
         );
 
-    -- Uma das entradas da ULA é o acumulador, a outra um mux que seleciona entre o bando de regs. e a constante
+    -- Uma das entradas da ULA é o acumulador, a outra um mux que seleciona entre o banco de regs e a constante
     p_ula: ula 
         port map (
             data1_in => mux_cte_regs_output_s,
             data2_in => acc_out_s, 
-            sel_op => ula_sel_op_s                  -- selected by instruction
+            sel_op => ula_sel_op_s,                  -- selected by instruction
             data3_out => mux_cte_ula_input_b_s,                      
             carry => ula_carry_s,                   -- no use for now (maybe)
             overflow => ula_overflow_s              -- no use for now (maybe)

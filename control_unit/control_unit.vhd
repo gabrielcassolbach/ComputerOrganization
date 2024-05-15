@@ -8,10 +8,12 @@ entity control_unit is
         clk         : in std_logic;
         rst         : in std_logic;
         opcode      : in unsigned(3 downto 0);      -- opcode from instruction memory (ROM)
-        state       : out std_logic;                -- for debugging
+        state       : out unsigned(1 downto 0);                -- for debugging
         pc_wr       : out std_logic;
         ir_wr       : out std_logic;
         reg_bank_wr : out std_logic;
+        acc_in_sel  : out std_logic;
+        ula_in_sel  : out std_logic;
         jump_sel    : out std_logic;                -- jump signal
         nop_sel     : out std_logic                 -- no operation signal
     );
@@ -23,12 +25,12 @@ architecture control_unit_a of control_unit is
         port(
             clk    : in std_logic;
             rst    : in std_logic;
-            state  : out std_logic
+            state  : out  unsigned(1 downto 0)
         );
     end component;
 
     -- Signals declaration
-    signal state_s : std_logic;
+    signal state_s :  unsigned(1 downto 0);   
     
     -- Components instantiation
     begin
@@ -47,9 +49,12 @@ architecture control_unit_a of control_unit is
 
 
         -- Output signals
-        pc_wr <= '1' when state_s = '10' else '0';
-        ir_wr <= '1' when state_s = '00' else '0';
-        reg_bank_out <= '1' when state_s = '10' else '0';
+        pc_wr <= '1' when state_s = "10" else '0';
+        ir_wr <= '1' when state_s = "00" else '0';
+        reg_bank_wr <= '1' when state_s = "10" else '0';
+
+        acc_in_sel <= '1'; -- conferir
+        ula_in_sel <= '0'; -- conferir
 
         jump_sel <= '1' when opcode = "1111" else '0'; -- inconditional jump (absolute)
         nop_sel  <= '1' when opcode = "0000" else '0'; -- no operation
