@@ -40,17 +40,23 @@ architecture processor_a of processor is
 
     component control_unit is
         port(
-            clk     : in std_logic;
-            rst     : in std_logic;
-            opcode  : in unsigned(3 downto 0);
-            state   : out  unsigned(1 downto 0);    -- for debugging
-            pc_wr   : out std_logic;
-            ir_wr   : out std_logic;
+            clk         : in std_logic;
+            rst         : in std_logic;
+            instruction : in  unsigned (15 downto 0); 
+            state       : out  unsigned(1 downto 0);    -- for debugging
+            selin_reg   : out unsigned (2 downto 0);
+            selout_reg  : out unsigned (2 downto 0);
+            pc_wr       : out std_logic;
+            acc_wr_en   : out std_logic;
+            ir_wr       : out std_logic;
+            ula_sel_op  : out  unsigned(1 downto 0);  
+            acc_rst     : out std_logic;
+            imm_sel     : out std_logic;
             reg_bank_wr : out std_logic;
             acc_in_sel  : out std_logic;
             ula_in_sel  : out std_logic;
-            jump_sel: out std_logic;
-            nop_sel : out std_logic
+            jump_sel    : out std_logic;
+            nop_sel     : out std_logic
         );
     end component control_unit;
 
@@ -116,25 +122,34 @@ architecture processor_a of processor is
     signal nop_sel_s: std_logic;
     signal acc_in_sel_s: std_logic;
     signal ula_in_sel_s: std_logic;
+    signal reg_sel_s : unsigned (3 downto 0);
+    signal imm_sel_s : std_logic;
 
     -- instruction partition signals (missing a lot of signals here)
     signal rom_data_out_s: unsigned(15 downto 0);
-    signal opcode_s: unsigned(3 downto 0);
+
+    --signal opcode_s: unsigned(3 downto 0);
     signal instruction_address_s: unsigned(6 downto 0);
 
     -- instruction register signals:
     signal ir_out_s: unsigned (15 downto 0);
 
     -- mux between constant and register bank signals
-    signal mux_cte_regs_input_a_s: unsigned(15 downto 0);
+    --signal mux_cte_regs_input_a_s: unsigned(15 downto 0);
     signal mux_cte_regs_input_b_s: unsigned(15 downto 0);
     signal mux_cte_regs_output_s: unsigned(15 downto 0);
 
     -- mux between constant and ula output signals
-    signal mux_cte_ula_input_a_s: unsigned(15 downto 0);
-    signal mux_cte_ula_input_b_s: unsigned(15 downto 0);
-    signal mux_cte_ula_output_s: unsigned(15 downto 0);
-    
+    --signal mux_cte_ula_input_a_s: unsigned(15 downto 0);
+    signal mux_cte_ula_input_b_s: unsigned (15 downto 0);
+    signal mux_cte_ula_output_s: unsigned (15 downto 0);
+        
+    -- mux between constant and acc out.
+    signal p_mux_cte_regs_output_s: unsigned (15 downto 0);
+
+    --constant
+    signal cte : unsigned (15 downto 0) := "0000000000000000";
+
     -- register bank signals
     signal selin_reg_s: unsigned(2 downto 0);
     signal selout_reg_s: unsigned(2 downto 0);
@@ -150,6 +165,7 @@ architecture processor_a of processor is
     signal ula_carry_s: std_logic;
     signal ula_overflow_s: std_logic;
     
+    
     -------------------------------------------------
     begin
 
@@ -158,11 +174,17 @@ architecture processor_a of processor is
         port map (
             clk => clk,
             rst => rst,
-            opcode => opcode_s,
+            instruction => ir_out_s,
             state => state_out,             -- state machine is inside control unit
             pc_wr => pc_wr_s,
             ir_wr => ir_wr_s,
+            selin_reg => selin_reg_s,
+            selout_reg => selout_reg_s,  
             reg_bank_wr => reg_bank_wr_s,
+            imm_sel => imm_sel_s,
+            acc_rst => acc_rst_s,
+            acc_wr_en => acc_wr_en_s,
+            ula_sel_op => ula_sel_op_s,
             acc_in_sel => acc_in_sel_s,
             ula_in_sel => ula_in_sel_s,
             jump_sel => jump_sel_s,                
@@ -194,24 +216,30 @@ architecture processor_a of processor is
             data_out => ir_out_s
         );
     
-     -- Mux para selecionar entre constante e saida do banco de regs.
     p_mux_cte_regs : mux 
         port map (
-            a => mux_cte_regs_input_a_s,    -- cte 
-            b => mux_cte_regs_input_b_s,    -- register bank output
+            a => cte,                         -- cte 
+            b => mux_cte_regs_input_b_s,      -- register bank output
             control_signal => ula_in_sel_s,   -- selected by instruction
             c => mux_cte_regs_output_s
         );
 
-    -- Mux para selecionar entre constante e saida da ULA
     p_mux_cte_ula: mux 
         port map (
-            a => mux_cte_ula_input_a_s,    -- cte 
-            b => mux_cte_ula_input_b_s,    -- ula output
+            a => cte,                        -- cte 
+            b => mux_cte_ula_input_b_s,      -- ula output
             control_signal => acc_in_sel_s,  -- selected by instruction
             c => mux_cte_ula_output_s
         );
- 
+
+    p_mux_cte_acc: mux 
+        port map (
+            a => cte,                        -- cte 
+            b => acc_out_s,      -- ula output
+            control_signal => imm_sel_s,  -- selected by instruction
+            c => p_mux_cte_regs_output_s
+        );
+
     p_regbank: register_bank 
         port map (
             clk => clk, 
@@ -220,10 +248,9 @@ architecture processor_a of processor is
             data_in => acc_out_s,               -- acc output 
             selin_reg => selin_reg_s,           -- selected by instruction
             selout_reg => selout_reg_s,         -- selected by instruction    
-            data_out => mux_cte_regs_input_b_s   -- >>> ANALISAR <<<         
+            data_out => mux_cte_regs_input_b_s  --         
         );
     
-    -- Tem como entrada um mux que seleciona entre a constante e a saida da ULA
     p_acumulator: acumulator 
         port map (
             clk => clk,
@@ -233,7 +260,6 @@ architecture processor_a of processor is
             acumulator_out => acc_out_s
         );
 
-    -- Uma das entradas da ULA é o acumulador, a outra um mux que seleciona entre o banco de regs e a constante
     p_ula: ula 
         port map (
             data1_in => mux_cte_regs_output_s,
@@ -244,10 +270,10 @@ architecture processor_a of processor is
             overflow => ula_overflow_s              -- no use for now (maybe)
         );
     
-    -- Logic
+    -- constant: 
+    cte <= "000000000000" & ir_out_s (3 downto 0);
 
     -- rom instrucion partition
-    opcode_s <= ir_out_s(15 downto 12);
     instruction_address_s <= ir_out_s(6 downto 0);
 
     -- pc increment calculation

@@ -1,0 +1,11 @@
+# Código do programa em assembly:
+# Faltam os saltos.
+
+    LI R3, 5 --OK
+    LI R4, 8 --OK
+C:  MOV A, R3 
+    ADD A, R4 
+    MOV R5, A
+D:  SUBI A, 1
+    MOV R5, A
+
