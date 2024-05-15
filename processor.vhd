@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;   
 use ieee.numeric_std.all;
 
-entity tmp is
+entity processor is
     port (
         clk           : in std_logic;
         rst           : in std_logic;
@@ -13,10 +13,10 @@ entity tmp is
         acc_out       : out unsigned(15 downto 0);
         ula_out       : out unsigned(15 downto 0)
     );
-end entity tmp;
+end entity processor;
 
---architecture test_a of test is
-architecture tmp_a of tmp is
+--architecture processor_a of processor is
+architecture processor_a of processor is
 
     ---------------------------------------------
     --components declarations: 
@@ -55,47 +55,55 @@ architecture tmp_a of tmp is
     end component control_unit;
 
     component instruction_register is
-        port( clk      : in std_logic;
-              rst      : in std_logic;
-              wr_en    : in std_logic;
-              data_in  : in unsigned(15 downto 0);
-              data_out : out unsigned(15 downto 0)
+        port( 
+            clk      : in std_logic;
+            rst      : in std_logic;
+            wr_en    : in std_logic;
+            data_in  : in unsigned(15 downto 0);
+            data_out : out unsigned(15 downto 0)
         );
      end component instruction_register;
 
     component ula is 
-        port(    data1_in, data2_in : in unsigned (15 downto 0);      
-         sel_op             : in unsigned(1 downto 0);        
-         data3_out          : out unsigned (15 downto 0);     
-         carry              : out std_logic;
-         overflow           : out std_logic);
+        port(    
+            data1_in, data2_in : in unsigned (15 downto 0);      
+            sel_op             : in unsigned(1 downto 0);        
+            data3_out          : out unsigned (15 downto 0);     
+            carry              : out std_logic;
+            overflow           : out std_logic
+        );
     end component;
 
     component register_bank is
-        port(    clk, rst, wr_en: in  std_logic; 
-         data_in        : in  unsigned(15 downto 0);
-         selin_reg      : in  unsigned(2 downto 0);
-         selout_reg     : in  unsigned(2 downto 0);
-         data_out       : out unsigned(15 downto 0));
+        port(    
+            clk, rst, wr_en: in  std_logic; 
+            data_in        : in  unsigned(15 downto 0);
+            selin_reg      : in  unsigned(2 downto 0);
+            selout_reg     : in  unsigned(2 downto 0);
+            data_out       : out unsigned(15 downto 0)
+        );
     end component;
 
     component acumulator is
-        port( clk      : in std_logic;
-      rst      : in std_logic;
-      wr_en    : in std_logic;
-      acumulator_in  : in unsigned(15 downto 0);
-      acumulator_out : out unsigned(15 downto 0));
+        port(
+            clk      : in std_logic;
+            rst      : in std_logic;
+            wr_en    : in std_logic;
+            acumulator_in  : in unsigned(15 downto 0);
+            acumulator_out : out unsigned(15 downto 0)
+        );
     end component;
 
     component mux is 
-        port(    control_signal: in std_logic; 
-         a, b: in unsigned (15 downto 0);
-         c: out unsigned (15 downto 0));
+        port(   
+            control_signal: in std_logic; 
+            a, b: in unsigned (15 downto 0);
+            c: out unsigned (15 downto 0)
+        );
     end component;
+
     ---------------------------------------------
-
     -- signals.
-
     -- program counter signals
     signal pc_adress_out_s: unsigned(6 downto 0);
     signal pc_increment_s: unsigned(6 downto 0);
@@ -141,7 +149,8 @@ architecture tmp_a of tmp is
     signal ula_sel_op_s: unsigned(1 downto 0);
     signal ula_carry_s: std_logic;
     signal ula_overflow_s: std_logic;
-
+    
+    -------------------------------------------------
     begin
 
     -- component instantiation
@@ -211,7 +220,7 @@ architecture tmp_a of tmp is
             data_in => acc_out_s,               -- acc output 
             selin_reg => selin_reg_s,           -- selected by instruction
             selout_reg => selout_reg_s,         -- selected by instruction    
-            data_out => mux_cte_regs_input_b_s             
+            data_out => mux_cte_regs_input_b_s   -- >>> ANALISAR <<<         
         );
     
     -- Tem como entrada um mux que seleciona entre a constante e a saida da ULA
@@ -246,4 +255,13 @@ architecture tmp_a of tmp is
                         (instruction_address_s - pc_adress_out_s) when jump_sel_s = '1' else    --absolute increment
                         "0000001";                                                              --default increment (may change later on)
 
-end architecture tmp_a;
+    -- output:
+    acc_out <=  acc_out_s;
+    pc_out <= pc_adress_out_s;
+    ir_out <= ir_out_s;
+    rgbank_out <= mux_cte_regs_input_b_s;
+    acc_out <= acc_out_s;
+    ula_out <= mux_cte_ula_input_b_s;   
+
+    
+end architecture processor_a;

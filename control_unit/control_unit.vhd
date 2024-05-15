@@ -30,7 +30,7 @@ architecture control_unit_a of control_unit is
     end component;
 
     -- Signals declaration
-    signal state_s :  unsigned(1 downto 0);   
+    signal state_s :  unsigned(1 downto 0) := "10";   
     
     -- Components instantiation
     begin
@@ -49,7 +49,7 @@ architecture control_unit_a of control_unit is
 
 
         -- Output signals
-        pc_wr <= '1' when state_s = "10" else '0';
+        pc_wr <= '1' when state_s = "00" else '0';
         ir_wr <= '1' when state_s = "00" else '0';
         reg_bank_wr <= '1' when state_s = "10" else '0';
 

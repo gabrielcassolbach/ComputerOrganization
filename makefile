@@ -14,9 +14,9 @@ compile:
 	ghdl -a --std=08 instruction_register/*.vhd
 	ghdl -a --std=08 *.vhd 
 
-	# ghdl -a --std=08 $(t)_tb.vhd 
-	# ghdl -e --std=08 $(t)_tb
-	# ghdl -r --std=08 $(t)_tb --wave=waves/$(t)_tb.ghw --stop-time=1ms
+	ghdl -a --std=08 $(t)_tb.vhd 
+	ghdl -e --std=08 $(t)_tb
+	ghdl -r --std=08 $(t)_tb --wave=waves/$(t)_tb.ghw --stop-time=1ms
 
 	rm *.cf
 
