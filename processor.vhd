@@ -145,7 +145,7 @@ architecture processor_a of processor is
     signal mux_cte_ula_output_s: unsigned (15 downto 0);
         
     -- mux between constant and acc out.
-    signal p_mux_cte_regs_output_s: unsigned (15 downto 0);
+    signal sel_acc_cte  : unsigned (15 downto 0);
 
     --constant
     signal cte : unsigned (15 downto 0) := "0000000000000000";
@@ -216,6 +216,7 @@ architecture processor_a of processor is
             data_out => ir_out_s
         );
     
+    -- entrada ula.
     p_mux_cte_regs : mux 
         port map (
             a => cte,                         -- cte 
@@ -224,6 +225,7 @@ architecture processor_a of processor is
             c => mux_cte_regs_output_s
         );
 
+    -- entrada acumulador.
     p_mux_cte_ula: mux 
         port map (
             a => cte,                        -- cte 
@@ -232,12 +234,13 @@ architecture processor_a of processor is
             c => mux_cte_ula_output_s
         );
 
+    -- entrada para carga imediata.
     p_mux_cte_acc: mux 
         port map (
             a => cte,                        -- cte 
-            b => acc_out_s,      -- ula output
+            b => acc_out_s,               -- ula output
             control_signal => imm_sel_s,  -- selected by instruction
-            c => p_mux_cte_regs_output_s
+            c => sel_acc_cte
         );
 
     p_regbank: register_bank 
@@ -245,7 +248,7 @@ architecture processor_a of processor is
             clk => clk, 
             rst => rst, 
             wr_en => reg_bank_wr_s,             -- controlled by control unit (not implemented yet)
-            data_in => acc_out_s,               -- acc output 
+            data_in => sel_acc_cte,               -- acc output 
             selin_reg => selin_reg_s,           -- selected by instruction
             selout_reg => selout_reg_s,         -- selected by instruction    
             data_out => mux_cte_regs_input_b_s  --         

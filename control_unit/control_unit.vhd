@@ -62,7 +62,9 @@ architecture control_unit_a of control_unit is
 
         -- Output signals
         pc_wr <= '1' when state_s = "00" else '0';
+        
         ir_wr <= '1' when state_s = "00" else '0';
+        
         reg_bank_wr <= '1' when state_s = "10" else '0';
 
         acc_in_sel <= '1' when instruction (11 downto 8) = "1000" else
@@ -70,15 +72,16 @@ architecture control_unit_a of control_unit is
         
         ula_in_sel <= '1' when opcode_s = "1100" else '0'; 
         
-        acc_rst <= '1' when opcode_s = "1100" and state_s = "00" else '0';
-        acc_wr_en <= '0' when opcode_s = "0011" and state_s = "01" else '1';
+        acc_rst <= '1' when opcode_s = "1100" and state_s = "01" else '0';
         
-        -- adiconar operação na ULA.
+        acc_wr_en <= '0' when opcode_s = "0011" and state_s = "10" else '1'; 
+                      
         ula_sel_op <= "00" when opcode_s = "1100" else "00"; -- MOV. (SOMA)
 
-        imm_sel <= instruction (8);
+        imm_sel <= not instruction (8);
         
         jump_sel <= '1' when opcode_s = "1111" else '0'; -- inconditional jump (absolute)
+        
         nop_sel  <= '1' when opcode_s = "0000" else '0'; -- no operation
         
         state <= state_s;
