@@ -1,13 +1,12 @@
                
-MOV : 1100 dddd ssss xxxx
-ADD : 0100 dddd ssss xxxx
-SUB : 0101 dddd ssss cccc
+MOV : 1100_dddd_ssss_xxxx
+ADD : 0100_dddd_ssss_xxxx
+SUB : 0101_dddd_ssss_cccc
 NOP : 0000
-LI  : 0011 dddd xxxx cccc
-
--> definição dos 8 registradores:
-dddd ou ssss
+LI  : 0011_dddd_xxxx_cccc
+B   : 1111_xxxxx_aaaaaaa
 ----------------------------------
+Definição dos 8 registradores:
 0000 -> r0
 0001 -> r1
 0010 -> r2 
@@ -18,13 +17,12 @@ dddd ou ssss
 0111 -> r7
 1000 -> acumulador
 ----------------------------------
-
 onde:
-
     dddd -> registrador destino
     ssss -> registrador fonte.
     xxxx -> irrelevante.
-    cccc -> constante de 4 bits em complemento de 2.
+    cccc -> constante de 4 bits.
+    aaaaaaa -> constante de 7 bits (endereço destino).
 ---------------------------------------------------
 
 

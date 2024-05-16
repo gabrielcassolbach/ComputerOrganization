@@ -15,9 +15,7 @@ entity processor is
     );
 end entity processor;
 
---architecture processor_a of processor is
 architecture processor_a of processor is
-
     ---------------------------------------------
     --components declarations: 
     component program_counter is
@@ -43,7 +41,7 @@ architecture processor_a of processor is
             clk         : in std_logic;
             rst         : in std_logic;
             instruction : in  unsigned (15 downto 0); 
-            state       : out  unsigned(1 downto 0);    -- for debugging
+            state       : out  unsigned(1 downto 0);   
             selin_reg   : out unsigned (2 downto 0);
             selout_reg  : out unsigned (2 downto 0);
             pc_wr       : out std_logic;
@@ -135,12 +133,10 @@ architecture processor_a of processor is
     signal ir_out_s: unsigned (15 downto 0);
 
     -- mux between constant and register bank signals
-    --signal mux_cte_regs_input_a_s: unsigned(15 downto 0);
     signal mux_cte_regs_input_b_s: unsigned(15 downto 0);
     signal mux_cte_regs_output_s: unsigned(15 downto 0);
 
     -- mux between constant and ula output signals
-    --signal mux_cte_ula_input_a_s: unsigned(15 downto 0);
     signal mux_cte_ula_input_b_s: unsigned (15 downto 0);
     signal mux_cte_ula_output_s: unsigned (15 downto 0);
         
@@ -247,7 +243,7 @@ architecture processor_a of processor is
             clk => clk, 
             rst => rst, 
             wr_en => reg_bank_wr_s,             -- controlled by control unit (not implemented yet)
-            data_in => sel_acc_cte,               -- acc output 
+            data_in => sel_acc_cte,             -- acc output 
             selin_reg => selin_reg_s,           -- selected by instruction
             selout_reg => selout_reg_s,         -- selected by instruction    
             data_out => mux_cte_regs_input_b_s  --         
@@ -268,8 +264,8 @@ architecture processor_a of processor is
             data2_in => acc_out_s, 
             sel_op => ula_sel_op_s,                  -- selected by instruction
             data3_out => mux_cte_ula_input_b_s,                      
-            carry => ula_carry_s,                   -- no use for now (maybe)
-            overflow => ula_overflow_s              -- no use for now (maybe)
+            carry => ula_carry_s,                   -- no use for now 
+            overflow => ula_overflow_s              -- no use for now 
         );
     
     -- constant: 
@@ -279,9 +275,9 @@ architecture processor_a of processor is
     instruction_address_s <= ir_out_s(6 downto 0);
 
     -- pc increment calculation
-    pc_increment_s <=   "0000001" when (jump_sel_s = '0' or nop_sel_s = '1') else               --logic on this line will change when more instructions are added (maybe)
-                        (instruction_address_s - pc_adress_out_s) when jump_sel_s = '1' else    --absolute increment 
-                        "0000001";                                                              --default increment (may change later on)
+    pc_increment_s <=  "0000001" when (jump_sel_s = '0' or nop_sel_s = '1')            else               
+                       (instruction_address_s - pc_adress_out_s) when jump_sel_s = '1' else    --absolute increment 
+                       "0000001";                                                              --default increment -
 
     -- output:
     pc_out <= pc_adress_out_s;
@@ -290,5 +286,4 @@ architecture processor_a of processor is
     acc_out <= acc_out_s;
     ula_out <= mux_cte_ula_input_b_s;   
 
-    
 end architecture processor_a;
