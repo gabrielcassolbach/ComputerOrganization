@@ -112,7 +112,7 @@ architecture processor_a of processor is
     signal pc_adress_out_s: unsigned(6 downto 0);
     signal pc_increment_s: unsigned(6 downto 0);
 
- -- control unit signals
+    -- control unit signals
     signal pc_wr_s: std_logic;
     signal ir_wr_s: std_logic;
     signal reg_bank_wr_s: std_logic;
@@ -195,7 +195,7 @@ architecture processor_a of processor is
             data_out => pc_adress_out_s
         );
 
- mem_rom : rom
+    mem_rom : rom
         port map (
             clk => clk,
             address => pc_adress_out_s,

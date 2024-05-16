@@ -39,7 +39,7 @@ architecture control_unit_a of control_unit is
 
     -- Signals declaration
     signal state_s :  unsigned(1 downto 0) := "10";   
-    signal opcode_s: unsigned(3 downto 0);
+    signal opcode_s: unsigned(3 downto 0) := "0000";
     
     -- Components instantiation
     begin

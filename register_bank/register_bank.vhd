@@ -23,23 +23,23 @@ port( clk      : in std_logic;
 end component;
 
 --signals 
-signal wr_en0: std_logic;
-signal wr_en1: std_logic;
-signal wr_en2: std_logic;
-signal wr_en3: std_logic;
-signal wr_en4: std_logic;
-signal wr_en5: std_logic;
-signal wr_en6: std_logic;
-signal wr_en7: std_logic;
+signal wr_en0: std_logic := '0';
+signal wr_en1: std_logic := '0';
+signal wr_en2: std_logic := '0';
+signal wr_en3: std_logic := '0';
+signal wr_en4: std_logic := '0';
+signal wr_en5: std_logic := '0';
+signal wr_en6: std_logic := '0';
+signal wr_en7: std_logic := '0';
 
-signal saida_r0: unsigned(15 downto 0);
-signal saida_r1: unsigned(15 downto 0);
-signal saida_r2: unsigned(15 downto 0);
-signal saida_r3: unsigned(15 downto 0);
-signal saida_r4: unsigned(15 downto 0);
-signal saida_r5: unsigned(15 downto 0);
-signal saida_r6: unsigned(15 downto 0);
-signal saida_r7: unsigned(15 downto 0);
+signal saida_r0: unsigned(15 downto 0) := "0000000000000000";
+signal saida_r1: unsigned(15 downto 0) := "0000000000000000";
+signal saida_r2: unsigned(15 downto 0) := "0000000000000000";
+signal saida_r3: unsigned(15 downto 0) := "0000000000000000";
+signal saida_r4: unsigned(15 downto 0) := "0000000000000000";
+signal saida_r5: unsigned(15 downto 0) := "0000000000000000";
+signal saida_r6: unsigned(15 downto 0) := "0000000000000000";
+signal saida_r7: unsigned(15 downto 0) := "0000000000000000";
 
       begin 
       r0: reg16bits port map (clk => clk, rst => rst, wr_en => '0', data_in => "0000000000000000",   data_out => saida_r0); --registrador com constante zero
