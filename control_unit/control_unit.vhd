@@ -51,14 +51,11 @@ architecture control_unit_a of control_unit is
         );
         
         -- instruction format: 16 bits
-
-        -- 15-12: opcode
         opcode_s <= instruction (15 downto 12);
-        -- 11-8: registrador 1. => 0{011}
+        
         selin_reg <=  instruction (10 downto 8); 
-        -- 7-4: registrador 2.  => 0{100}
+
         selout_reg <= instruction (6 downto 4);
-        -- 3-0: constante.
 
         -- Output signals
         pc_wr <= '1' when state_s = "00" else '0';

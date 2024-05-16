@@ -280,7 +280,7 @@ architecture processor_a of processor is
 
     -- pc increment calculation
     pc_increment_s <=   "0000001" when (jump_sel_s = '0' or nop_sel_s = '1') else               --logic on this line will change when more instructions are added (maybe)
-                        (instruction_address_s - pc_adress_out_s) when jump_sel_s = '1' else    --absolute increment
+                        (instruction_address_s - pc_adress_out_s) when jump_sel_s = '1' else    --absolute increment 
                         "0000001";                                                              --default increment (may change later on)
 
     -- output:
