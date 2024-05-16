@@ -100,6 +100,18 @@ architecture tesbench of processor_tb is
             wait for 5 ns;
             clk <= '0';
             wait for 5 ns;
+            clk <= '1';
+            wait for 5 ns;
+            clk <= '0';
+            wait for 5 ns;
+            clk <= '1';
+            wait for 5 ns;
+            clk <= '0';
+            wait for 5 ns;
+            clk <= '1';
+            wait for 5 ns;
+            clk <= '0';
+            wait for 5 ns;
             wait;
         end process;
 end architecture tesbench;

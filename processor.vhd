@@ -51,7 +51,7 @@ architecture processor_a of processor is
             ir_wr       : out std_logic;
             ula_sel_op  : out  unsigned(1 downto 0);  
             acc_rst     : out std_logic;
-            imm_sel     : out std_logic;
+            mux_cte_acc_out_sel     : out std_logic;
             reg_bank_wr : out std_logic;
             acc_in_sel  : out std_logic;
             ula_in_sel  : out std_logic;
@@ -123,7 +123,7 @@ architecture processor_a of processor is
     signal acc_in_sel_s: std_logic;
     signal ula_in_sel_s: std_logic;
     signal reg_sel_s : unsigned (3 downto 0);
-    signal imm_sel_s : std_logic;
+    signal mux_cte_acc_out_sel_s : std_logic;
 
     -- instruction partition signals (missing a lot of signals here)
     signal rom_data_out_s: unsigned(15 downto 0);
@@ -181,7 +181,7 @@ architecture processor_a of processor is
             selin_reg => selin_reg_s,
             selout_reg => selout_reg_s,  
             reg_bank_wr => reg_bank_wr_s,
-            imm_sel => imm_sel_s,
+            mux_cte_acc_out_sel => mux_cte_acc_out_sel_s,
             acc_rst => acc_rst_s,
             acc_wr_en => acc_wr_en_s,
             ula_sel_op => ula_sel_op_s,
@@ -234,12 +234,12 @@ architecture processor_a of processor is
             c => mux_cte_ula_output_s
         );
 
-    -- entrada para carga imediata.
+    -- entrada para carga imediata ou saida do acumulador no banco de registradores.
     p_mux_cte_acc: mux 
         port map (
-            a => cte,                        -- cte 
-            b => acc_out_s,               -- ula output
-            control_signal => imm_sel_s,  -- selected by instruction
+            a => cte,                                 -- cte 
+            b => acc_out_s,                           -- ula output
+            control_signal => mux_cte_acc_out_sel_s,  -- selected by instruction
             c => sel_acc_cte
         );
 

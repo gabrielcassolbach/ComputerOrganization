@@ -16,11 +16,11 @@ entity control_unit is
         reg_bank_wr : out std_logic;
         acc_wr_en   : out std_logic;
         acc_rst     : out std_logic;
-        imm_sel     : out std_logic;
+        mux_cte_acc_out_sel     : out std_logic;
         mux_reg_cte_sel: out std_logic;
         ula_sel_op  : out unsigned (1 downto 0);  
         ula_in_sel  : out std_logic;
-        acc_in_sel  : out std_logic;
+        acc_in_sel  : out std_logic;                -- control signal on the mux for the accumulator input
         jump_sel    : out std_logic;                -- jump signal
         nop_sel     : out std_logic                 -- no operation signal
     );
@@ -65,20 +65,21 @@ architecture control_unit_a of control_unit is
         
         ir_wr <= '1' when state_s = "00" else '0';
         
-        reg_bank_wr <= '1' when state_s = "10" else '0';
+        reg_bank_wr <= '1' when ((opcode_s  = "1100" and instruction(7 downto 4) = "1000") or opcode_s = "0011") and state_s = "10" else '0';  -- MOV instruction (MOV R3, A) or LI instruction
 
-        acc_in_sel <= '1' when instruction (11 downto 8) = "1000" else
-                      '0'; 
+        acc_in_sel <= '1' when instruction (11 downto 8) = "1000" else '0';  -- control signal on the mux for the accumulator input
         
         ula_in_sel <= '1' when opcode_s = "1100" else '0'; 
         
-        acc_rst <= '1' when opcode_s = "1100" and state_s = "01" else '0';
+        acc_rst <= '1' when (opcode_s = "1100" and state_s = "01" and instruction(7 downto 4) /= "1000") else '0';
         
-        acc_wr_en <= '0' when opcode_s = "0011" and state_s = "10" else '1'; 
+        -- acc_wr_en <= '0' when opcode_s = "0011" and state_s = "10" else '1';
+        acc_wr_en <= '1' when opcode_s /= "0011" and state_s = "10" else '0'; 
                       
         ula_sel_op <= "00" when opcode_s = "1100" else "00"; -- MOV. (SOMA)
 
-        imm_sel <= not instruction (8);
+        -- mux_cte_acc_out_sel <= not instruction (8);
+        mux_cte_acc_out_sel <= '0' when (opcode_s = "0011") else '1';
         
         jump_sel <= '1' when opcode_s = "1111" else '0'; -- inconditional jump (absolute)
         
