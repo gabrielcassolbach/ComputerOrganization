@@ -69,16 +69,14 @@ architecture control_unit_a of control_unit is
 
         acc_in_sel <= '1' when instruction (11 downto 8) = "1000" else '0';  -- control signal on the mux for the accumulator input
         
-        ula_in_sel <= '1' when opcode_s = "1100" else '0'; 
-        
-        acc_rst <= '1' when (opcode_s = "1100" and state_s = "01" and instruction(7 downto 4) /= "1000") else '0';
-        
-        -- acc_wr_en <= '0' when opcode_s = "0011" and state_s = "10" else '1';
-        acc_wr_en <= '1' when opcode_s /= "0011" and state_s = "10" else '0'; 
+        ula_in_sel <= '1' when (opcode_s = "1100" or opcode_s = "0100" or opcode_s = "0101") else '0'; 
+            
+        acc_wr_en <= '1' when (opcode_s /= "0011" and state_s = "10" and instruction(7 downto 4) /= "1000") else '0'; 
                       
-        ula_sel_op <= "00" when opcode_s = "1100" else "00"; -- MOV. (SOMA)
+        ula_sel_op <= "00" when opcode_s = "0100" else
+                      "01" when opcode_s = "0101" else 
+                      "00";
 
-        -- mux_cte_acc_out_sel <= not instruction (8);
         mux_cte_acc_out_sel <= '0' when (opcode_s = "0011") else '1';
         
         jump_sel <= '1' when opcode_s = "1111" else '0'; -- inconditional jump (absolute)

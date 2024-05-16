@@ -21,8 +21,8 @@ begin
 
     data1_temp <= '0' & data1_in;
     data2_temp <= '0' & data2_in;
-    sum_temp <= data1_temp + data2_temp;
-    sub_temp <= data1_temp - data2_temp;
+    sum_temp <= data2_temp + data1_temp;
+    sub_temp <= data2_temp - data1_temp;
 
     -- resultado da operação
     data3_out <=    sum_temp(15 downto 0)   when sel_op="00" else  -- soma.

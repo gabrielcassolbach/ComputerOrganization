@@ -157,14 +157,13 @@ architecture processor_a of processor is
     -- acumulator signals
     signal acc_in_s: unsigned(15 downto 0);
     signal acc_rst_s: std_logic;
-    signal acc_wr_en_s: std_logic;
+    signal acc_wr_en_s: std_logic := '0';
     signal acc_out_s: unsigned(15 downto 0);
 
     -- ula signals
     signal ula_sel_op_s: unsigned(1 downto 0);
     signal ula_carry_s: std_logic;
     signal ula_overflow_s: std_logic;
-    
     
     -------------------------------------------------
     begin
@@ -285,7 +284,6 @@ architecture processor_a of processor is
                         "0000001";                                                              --default increment (may change later on)
 
     -- output:
-    acc_out <=  acc_out_s;
     pc_out <= pc_adress_out_s;
     ir_out <= ir_out_s;
     rgbank_out <= mux_cte_regs_input_b_s;

@@ -12,7 +12,8 @@ entity acumulator is
 end entity;
 
 architecture struct of acumulator is 
-    signal values: unsigned(15 downto 0);
+    signal values: unsigned(15 downto 0) := "0000000000000000";
+
     begin
         process(clk,rst,wr_en) 
         begin                

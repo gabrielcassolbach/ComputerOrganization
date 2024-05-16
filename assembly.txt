@@ -3,7 +3,7 @@
 
     LI R3, 5 --OK
     LI R4, 8 --OK
-C:  MOV A, R3 
+C:  MOV A, R3 -- OK
     ADD A, R4 
     MOV R5, A
 D:  SUBI A, 1

@@ -1,7 +1,7 @@
                
 MOV : 1100 dddd ssss xxxx
 ADD : 0100 dddd ssss xxxx
-SUBI: 0101 dddd ssss cccc
+SUB : 0101 dddd ssss cccc
 NOP : 0000
 LI  : 0011 dddd xxxx cccc
 
