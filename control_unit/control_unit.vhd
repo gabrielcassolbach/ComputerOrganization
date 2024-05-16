@@ -18,7 +18,7 @@ entity control_unit is
         acc_rst     : out std_logic;
         mux_cte_acc_out_sel     : out std_logic;
         mux_reg_cte_sel: out std_logic;
-        ula_sel_op  : out unsigned (1 downto 0);  
+        ula_sel_op  : out unsigned (2 downto 0);  
         ula_in_sel  : out std_logic;
         acc_in_sel  : out std_logic;                -- control signal on the mux for the accumulator input
         jump_sel    : out std_logic;                -- jump signal
@@ -58,7 +58,7 @@ architecture control_unit_a of control_unit is
         selout_reg <= instruction (6 downto 4);
 
         -- Output signals
-        pc_wr <= '1' when state_s = "00" else '0';
+        pc_wr <= '1' when state_s = "00" or (opcode_s = "1111" and state_s = "01") else '0';
         
         ir_wr <= '1' when state_s = "00" else '0';
         
@@ -70,9 +70,10 @@ architecture control_unit_a of control_unit is
             
         acc_wr_en <= '1' when (opcode_s /= "0011" and state_s = "10" and instruction(7 downto 4) /= "1000") else '0'; 
                       
-        ula_sel_op <= "00" when opcode_s = "0100" else
-                      "01" when opcode_s = "0101" else 
-                      "00";
+        ula_sel_op <= "000" when opcode_s = "0100" else
+                      "001" when opcode_s = "0101" else
+                      "100" when opcode_s = "1100" else 
+                      "000";
 
         mux_cte_acc_out_sel <= '0' when (opcode_s = "0011") else '1';
         

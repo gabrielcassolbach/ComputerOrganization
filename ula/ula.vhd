@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity ula is 
     port (
         data1_in, data2_in : in unsigned (15 downto 0);      --entrada de dados
-        sel_op             : in unsigned(1 downto 0);        --seleção de operação
+        sel_op             : in unsigned(2 downto 0);        --seleção de operação
         data3_out          : out unsigned (15 downto 0);     --resultado da operação
         carry              : out std_logic;                  --carry
         overflow           : out std_logic                   --overflow
@@ -25,10 +25,11 @@ begin
     sub_temp <= data2_temp - data1_temp;
 
     -- resultado da operação
-    data3_out <=    sum_temp(15 downto 0)   when sel_op="00" else  -- soma.
-                    sub_temp(15 downto 0)   when sel_op="01" else  -- subtração.
-                    (data1_in xor data2_in) when sel_op="10" else  -- xor.
-                    (data1_in and data2_in) when sel_op="11" else  -- and.
+    data3_out <=    sum_temp(15 downto 0)   when sel_op="000" else  -- soma.
+                    sub_temp(15 downto 0)   when sel_op="001" else  -- subtração.
+                    (data1_in xor data2_in) when sel_op="010" else  -- xor.
+                    (data1_in and data2_in) when sel_op="011" else  -- and.
+                    (data1_in)              when sel_op="100" else
                     "0000000000000000";
     
     -- carry

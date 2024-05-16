@@ -47,7 +47,7 @@ architecture processor_a of processor is
             pc_wr       : out std_logic;
             acc_wr_en   : out std_logic;
             ir_wr       : out std_logic;
-            ula_sel_op  : out  unsigned(1 downto 0);  
+            ula_sel_op  : out  unsigned(2 downto 0);  
             acc_rst     : out std_logic;
             mux_cte_acc_out_sel     : out std_logic;
             reg_bank_wr : out std_logic;
@@ -71,7 +71,7 @@ architecture processor_a of processor is
     component ula is 
         port(    
             data1_in, data2_in : in unsigned (15 downto 0);      
-            sel_op             : in unsigned(1 downto 0);        
+            sel_op             : in unsigned(2 downto 0);        
             data3_out          : out unsigned (15 downto 0);     
             carry              : out std_logic;
             overflow           : out std_logic
@@ -112,7 +112,7 @@ architecture processor_a of processor is
     signal pc_adress_out_s: unsigned(6 downto 0);
     signal pc_increment_s: unsigned(6 downto 0);
 
-    -- control unit signals
+ -- control unit signals
     signal pc_wr_s: std_logic;
     signal ir_wr_s: std_logic;
     signal reg_bank_wr_s: std_logic;
@@ -157,7 +157,7 @@ architecture processor_a of processor is
     signal acc_out_s: unsigned(15 downto 0);
 
     -- ula signals
-    signal ula_sel_op_s: unsigned(1 downto 0);
+    signal ula_sel_op_s: unsigned(2 downto 0);
     signal ula_carry_s: std_logic;
     signal ula_overflow_s: std_logic;
     
@@ -195,7 +195,7 @@ architecture processor_a of processor is
             data_out => pc_adress_out_s
         );
 
-    mem_rom : rom
+ mem_rom : rom
         port map (
             clk => clk,
             address => pc_adress_out_s,

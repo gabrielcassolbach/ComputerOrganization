@@ -9,3 +9,5 @@ C:  MOV A, R3
 D:  LI  R2, 1
     SUB A, R2
     MOV R5, A
+    B C
+    

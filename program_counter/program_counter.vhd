@@ -34,7 +34,7 @@ architecture struct of program_counter is
 
       --signals
       signal pc_out : unsigned (6 downto 0);
-      signal incrementer_out: unsigned (6 downto 0);
+      signal incrementer_out: unsigned (6 downto 0) := "1111111";
 
 begin
       pc: reg7bits port map (
