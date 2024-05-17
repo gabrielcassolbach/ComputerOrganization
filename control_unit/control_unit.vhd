@@ -51,6 +51,7 @@ architecture control_unit_a of control_unit is
         );
         
         -- instruction format: 16 bits
+        
         opcode_s <= instruction (15 downto 12);
                                                     
         selin_reg <=  instruction (10 downto 8); 
@@ -70,6 +71,13 @@ architecture control_unit_a of control_unit is
         
         ula_in_sel <= '1' when (opcode_s = "1100" or opcode_s = "0100" or opcode_s = "0101") else '0'; 
             
+
+
+
+
+
+
+
         acc_wr_en <= '1' when (opcode_s /= "0011" and state_s = "10" and instruction(7 downto 4) /= "1000") else '0'; 
                       
         ula_sel_op <= "000" when opcode_s = "0100" else

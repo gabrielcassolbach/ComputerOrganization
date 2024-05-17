@@ -13,7 +13,7 @@ end entity rom;
 architecture a_rom of rom is
     type memory is array (0 to 127) of unsigned(15 downto 0);
     constant rom_data : memory := (
-        0  => B"0011_0011_0000_0100", -- LI  R3, 4.
+        0  => B"0011_0011_0000_0101", -- LI  R3, 5.
         1  => B"0011_0100_0000_1000", -- LI  R4, 8
         2  => B"1100_1000_0011_0000", -- MOV A, R3 
         3  => B"0100_0000_0100_0000", -- ADD R4 
