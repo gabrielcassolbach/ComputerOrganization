@@ -25,10 +25,11 @@
 
 ## Exemplos
 
-- ADD A, R1 ---- A <- A+R1
+- ADD R1 ---- A <- A+R1
 - LD A, 10 ---- A <- 10
 - MOV A, R5 ---- A <- R5
 - MOV R4, A ---- R4 <- A
+- SUB R4 ---- A <- A-R4
 
 ### obs
 
@@ -37,8 +38,8 @@
 #### Descrição dos opcodes implementados na ROM.
 
 MOV : 1100_dddd_ssss_xxxx
-ADD : 0100_dddd_ssss_xxxx
-SUB : 0101_dddd_ssss_cccc
+ADD : 0100_xxxx_ssss_xxxx
+SUB : 0101_xxxx_ssss_cccc
 NOP : 0000
 LI : 0011_dddd_xxxx_cccc
 JMP : 1111_xxxxx_aaaaaaa

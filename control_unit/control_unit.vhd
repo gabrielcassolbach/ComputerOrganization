@@ -52,7 +52,7 @@ architecture control_unit_a of control_unit is
         
         -- instruction format: 16 bits
         opcode_s <= instruction (15 downto 12);
-        
+                                                    
         selin_reg <=  instruction (10 downto 8); 
 
         selout_reg <= instruction (6 downto 4);
@@ -62,9 +62,11 @@ architecture control_unit_a of control_unit is
         
         ir_wr <= '1' when state_s = "00" else '0';
         
-        reg_bank_wr <= '1' when ((opcode_s  = "1100" and instruction(7 downto 4) = "1000") or opcode_s = "0011") and state_s = "10" else '0';  -- MOV instruction (MOV R3, A) or LI instruction
+        -- MOV instruction (MOV R3, A) or LI instruction
+        reg_bank_wr <= '1' when ((opcode_s  = "1100" and instruction(7 downto 4) = "1000") or opcode_s = "0011") and state_s = "10" else '0';  
 
-        acc_in_sel <= '1' when instruction (11 downto 8) = "1000" else '0';  -- control signal on the mux for the accumulator input
+        -- control signal on the mux for the accumulator input
+        acc_in_sel <= '1' when instruction (11 downto 8) = "1000" or (opcode_s = "0100") or (opcode_s = "0101")  else '0';  
         
         ula_in_sel <= '1' when (opcode_s = "1100" or opcode_s = "0100" or opcode_s = "0101") else '0'; 
             
