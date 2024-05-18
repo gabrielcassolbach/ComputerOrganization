@@ -33,7 +33,7 @@
 
 ### obs
 
-- Implementar instrução CLR para o acumulador ou fazer apenas internamente para o comendo MOV?
+
 
 #### Descrição dos opcodes implementados na ROM.
 
@@ -41,8 +41,9 @@ MOV : 1100_dddd_ssss_xxxx
 ADD : 0100_xxxx_ssss_xxxx
 SUB : 0101_xxxx_ssss_cccc
 NOP : 0000
-LI : 0011_dddd_xxxx_cccc
+LI  : 0011_dddd_xxxx_cccc
 JMP : 1111_xxxxx_aaaaaaa
+CMP : 0001_xxxx_ssss_xxxx
 
 ---
 

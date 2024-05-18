@@ -4,11 +4,12 @@ use ieee.numeric_std.all;
 
 entity ula is 
     port (
-        data1_in, data2_in : in unsigned (15 downto 0);      --entrada de dados
-        sel_op             : in unsigned(2 downto 0);        --seleção de operação
-        data3_out          : out unsigned (15 downto 0);     --resultado da operação
-        carry              : out std_logic;                  --carry
-        overflow           : out std_logic                   --overflow
+        data1_in           : in unsigned (15 downto 0);      --data input 1 (reg bank or constant) 
+        data2_in           : in unsigned (15 downto 0);      --acumulator
+        sel_op             : in unsigned(2 downto 0);        --operator selection
+        data3_out          : out unsigned (15 downto 0);     --data output
+        carry              : out std_logic                   --carry
+        -- overflow           : out std_logic                   --overflow
     );
 end ula;
 
@@ -33,13 +34,15 @@ begin
                     "0000000000000000";
     
     -- carry
-    carry <= sum_temp(16);
+    carry <= sum_temp(16) when sel_op = "00" else
+             sub_temp(16) when sel_op = "01" else
+             '0';
 
     -- overflow
-    overflow <= '1' when sel_op = "00" and data1_in(15) = '0' and data2_in(15) = '0' and sum_temp(15) = '1' else
-                '1' when sel_op = "00" and data1_in(15) = '1' and data2_in(15) = '1' and sum_temp(15) = '0' else
-                '1' when sel_op = "01" and data1_in(15) = '0' and data2_in(15) = '1' and sub_temp(15) = '1' else
-                '1' when sel_op = "01" and data1_in(15) = '1' and data2_in(15) = '0' and sub_temp(15) = '0' else
-                '0';
+    -- overflow <= '1' when sel_op = "00" and data1_in(15) = '0' and data2_in(15) = '0' and sum_temp(15) = '1' else
+    --             '1' when sel_op = "00" and data1_in(15) = '1' and data2_in(15) = '1' and sum_temp(15) = '0' else
+    --             '1' when sel_op = "01" and data1_in(15) = '0' and data2_in(15) = '1' and sub_temp(15) = '1' else
+    --             '1' when sel_op = "01" and data1_in(15) = '1' and data2_in(15) = '0' and sub_temp(15) = '0' else
+    --             '0';
 
 end struct;

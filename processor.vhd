@@ -30,31 +30,34 @@ architecture processor_a of processor is
 
     component rom is
         port (
-            clk : in std_logic;
+            clk     : in std_logic;
             address : in unsigned(6 downto 0);
-            data : out unsigned(15 downto 0)
+            data    : out unsigned(15 downto 0)
         );
     end component rom;
 
     component control_unit is
         port(
-            clk         : in std_logic;
-            rst         : in std_logic;
-            instruction : in  unsigned (15 downto 0); 
-            state       : out  unsigned(1 downto 0);   
-            selin_reg   : out unsigned (2 downto 0);
-            selout_reg  : out unsigned (2 downto 0);
-            pc_wr       : out std_logic;
-            acc_wr_en   : out std_logic;
-            ir_wr       : out std_logic;
-            ula_sel_op  : out  unsigned(2 downto 0);  
-            acc_rst     : out std_logic;
+            clk           : in std_logic;
+            rst           : in std_logic;
+            instruction   : in unsigned (15 downto 0);
+            ula_out       : in unsigned (15 downto 0);
+            ula_carry     : in std_logic;
+            state         : out unsigned(1 downto 0);   
+            selin_reg     : out unsigned (2 downto 0);
+            selout_reg    : out unsigned (2 downto 0);
+            pc_wr         : out std_logic;
+            acc_wr_en     : out std_logic;
+            ir_wr         : out std_logic;
+            ula_sel_op    : out unsigned(2 downto 0);  
+            -- acc_rst     : out std_logic;
             mux_cte_acc_out_sel     : out std_logic;
-            reg_bank_wr : out std_logic;
-            acc_in_sel  : out std_logic;
-            ula_in_sel  : out std_logic;
-            jump_sel    : out std_logic;
-            nop_sel     : out std_logic
+            reg_bank_wr   : out std_logic;
+            acc_in_sel    : out std_logic;
+            ula_in_sel    : out std_logic;
+            jump_sel      : out std_logic;
+            branch_sel    : out std_logic;
+            nop_sel       : out std_logic
         );
     end component control_unit;
 
@@ -73,8 +76,8 @@ architecture processor_a of processor is
             data1_in, data2_in : in unsigned (15 downto 0);      
             sel_op             : in unsigned(2 downto 0);        
             data3_out          : out unsigned (15 downto 0);     
-            carry              : out std_logic;
-            overflow           : out std_logic
+            carry              : out std_logic
+            -- overflow           : out std_logic
         );
     end component;
 
@@ -117,6 +120,7 @@ architecture processor_a of processor is
     signal ir_wr_s: std_logic;
     signal reg_bank_wr_s: std_logic;
     signal jump_sel_s: std_logic;
+    signal branch_sel_s: std_logic;
     signal nop_sel_s: std_logic;
     signal acc_in_sel_s: std_logic;
     signal ula_in_sel_s: std_logic;
@@ -137,7 +141,7 @@ architecture processor_a of processor is
     signal mux_cte_regs_output_s: unsigned(15 downto 0);
 
     -- mux between constant and ula output signals
-    signal mux_cte_ula_input_b_s: unsigned (15 downto 0);
+    -- signal mux_cte_ula_input_b_s: unsigned (15 downto 0);
     signal mux_cte_ula_output_s: unsigned (15 downto 0);
         
     -- mux between constant and acc out.
@@ -152,14 +156,15 @@ architecture processor_a of processor is
 
     -- acumulator signals
     signal acc_in_s: unsigned(15 downto 0);
-    signal acc_rst_s: std_logic;
+    -- signal acc_rst_s: std_logic;
     signal acc_wr_en_s: std_logic := '0';
     signal acc_out_s: unsigned(15 downto 0);
 
     -- ula signals
     signal ula_sel_op_s: unsigned(2 downto 0);
     signal ula_carry_s: std_logic;
-    signal ula_overflow_s: std_logic;
+    -- signal ula_overflow_s: std_logic;
+    signal ula_out_s: unsigned(15 downto 0);
     
     -------------------------------------------------
     begin
@@ -170,6 +175,8 @@ architecture processor_a of processor is
             clk => clk,
             rst => rst,
             instruction => ir_out_s,
+            ula_out => ula_out_s,
+            ula_carry => ula_carry_s,
             state => state_out,             -- state machine is inside control unit
             pc_wr => pc_wr_s,
             ir_wr => ir_wr_s,
@@ -177,12 +184,13 @@ architecture processor_a of processor is
             selout_reg => selout_reg_s,  
             reg_bank_wr => reg_bank_wr_s,
             mux_cte_acc_out_sel => mux_cte_acc_out_sel_s,
-            acc_rst => acc_rst_s,
+            -- acc_rst => acc_rst_s,
             acc_wr_en => acc_wr_en_s,
             ula_sel_op => ula_sel_op_s,
             acc_in_sel => acc_in_sel_s,
             ula_in_sel => ula_in_sel_s,
-            jump_sel => jump_sel_s,                
+            jump_sel => jump_sel_s,
+            branch_sel => branch_sel_s,                
             nop_sel => nop_sel_s
         );
 
@@ -224,7 +232,7 @@ architecture processor_a of processor is
     p_mux_cte_ula: mux 
         port map (
             a => cte,                        -- cte 
-            b => mux_cte_ula_input_b_s,      -- ula output
+            b => ula_out_s,                  -- ula output
             control_signal => acc_in_sel_s,  -- selected by instruction
             c => mux_cte_ula_output_s
         );
@@ -252,7 +260,7 @@ architecture processor_a of processor is
     p_acumulator: acumulator 
         port map (
             clk => clk,
-            rst => acc_rst_s,                       -- controled by control unit (not implemented yet)
+            rst => rst,                             
             wr_en => acc_wr_en_s,                   -- controled by control unit (not implemented yet)
             acumulator_in => mux_cte_ula_output_s,     
             acumulator_out => acc_out_s
@@ -263,9 +271,9 @@ architecture processor_a of processor is
             data1_in => mux_cte_regs_output_s,
             data2_in => acc_out_s, 
             sel_op => ula_sel_op_s,                  -- selected by instruction
-            data3_out => mux_cte_ula_input_b_s,                      
-            carry => ula_carry_s,                   -- no use for now 
-            overflow => ula_overflow_s              -- no use for now 
+            data3_out => ula_out_s,                  -- output                 
+            carry => ula_carry_s                    -- used for branch selection on control unit
+            -- overflow => ula_overflow_s            -- no use for now 
         );
     
     -- constant: 
@@ -274,7 +282,7 @@ architecture processor_a of processor is
     -- rom instrucion partition
     instruction_address_s <= ir_out_s(6 downto 0);
 
-    -- pc increment calculation
+    -- pc increment calculation (IMPLEMENT BRANCH HERE)
     pc_increment_s <=  "0000001" when (jump_sel_s = '0' or nop_sel_s = '1')            else               
                        (instruction_address_s - pc_adress_out_s) when jump_sel_s = '1' else    --absolute increment 
                        "0000001";                                                              --default increment -
@@ -284,6 +292,6 @@ architecture processor_a of processor is
     ir_out <= ir_out_s;
     rgbank_out <= mux_cte_regs_input_b_s;
     acc_out <= acc_out_s;
-    ula_out <= mux_cte_ula_input_b_s;   
+    ula_out <= ula_out_s;   
 
 end architecture processor_a;
