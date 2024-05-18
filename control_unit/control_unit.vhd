@@ -93,7 +93,7 @@ architecture control_unit_a of control_unit is
 
         -- Flags
 
-        flags_wr_en_s <= '1' when opcode_s = "0001" else '0'; -- CMP instruction
+        flags_wr_en_s <= '1' when (opcode_s = "0001" and state_s = "01") else '0'; -- CMP instruction
 
         negative_flag_in_s <= '1' when ula_carry = '1' else '0';
         
@@ -111,12 +111,13 @@ architecture control_unit_a of control_unit is
         -- MOV instruction (MOV R3, A) or LI instruction
         reg_bank_wr <= '1' when ((opcode_s  = "1100" and instruction(7 downto 4) = "1000") or opcode_s = "0011") and state_s = "10" else '0';  
 
-        acc_wr_en <= '1' when (opcode_s /= "0011" and state_s = "10" and instruction(7 downto 4) /= "1000") else '0'; 
+        acc_wr_en <= '1' when (opcode_s /= "0011" and state_s = "10" and instruction(7 downto 4) /= "1000" and opcode_s /= "0001") else '0'; 
         
+
         -- selectors for the muxes
-        acc_in_sel <= '1' when instruction (11 downto 8) = "1000" or (opcode_s = "0100") or (opcode_s = "0101")  else '0';  
+        acc_in_sel <= '1' when (instruction (11 downto 8) = "1000" or (opcode_s = "0100") or (opcode_s = "0101"))  else '0';  
         
-        ula_in_sel <= '1' when (opcode_s = "1100" or opcode_s = "0100" or opcode_s = "0101") else '0'; 
+        ula_in_sel <= '1' when (opcode_s = "1100" or opcode_s = "0100" or opcode_s = "0101" or opcode_s = "0001") else '0'; 
         
         mux_cte_acc_out_sel <= '0' when (opcode_s = "0011") else '1';
         
@@ -127,7 +128,7 @@ architecture control_unit_a of control_unit is
         nop_sel  <= '1' when opcode_s = "0000" else '0'; -- no operation
         
         ula_sel_op <= "000" when opcode_s = "0100" else
-        "001" when opcode_s = "0101" else
+        "001" when (opcode_s = "0101" or opcode_s = "0001") else
         "100" when opcode_s = "1100" else 
         "000";
         
