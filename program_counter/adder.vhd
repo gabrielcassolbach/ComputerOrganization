@@ -13,5 +13,5 @@ entity adder is
  architecture struct of adder is 
     begin
         data_out <= (data_in + increment(6 downto 0)) when increment(7) = '0' else 
-                    (data_in - increment(6 downto 0)); 
+                    (data_in + increment(6 downto 0)); 
 end architecture;
