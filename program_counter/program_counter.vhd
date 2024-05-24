@@ -7,7 +7,7 @@ entity program_counter is
       clk      : in std_logic;
       wr_en    : in std_logic;
       rst      : in std_logic;
-      increment: in unsigned (6 downto 0);
+      increment: in unsigned (7 downto 0);
       data_out : out unsigned (6 downto 0)
    );
 end entity;
@@ -27,14 +27,14 @@ architecture struct of program_counter is
       --component (adder)
       component adder is
       port(
-            increment: in unsigned (6 downto 0);
+            increment: in unsigned (7 downto 0);
             data_in  : in unsigned  (6 downto 0);
             data_out : out unsigned (6 downto 0));
       end component;
 
       --signals
       signal pc_out : unsigned (6 downto 0);
-      signal incrementer_out: unsigned (6 downto 0) := "1111111";
+      signal incrementer_out: unsigned (6 downto 0);
 
 begin
       pc: reg7bits port map (

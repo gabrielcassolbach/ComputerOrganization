@@ -23,7 +23,7 @@ architecture processor_a of processor is
             clk : in std_logic;
             wr_en : in std_logic;
             rst : in std_logic;
-            increment : in unsigned(6 downto 0);
+            increment : in unsigned(7 downto 0);
             data_out : out unsigned(6 downto 0)
         );
     end component program_counter;
@@ -113,7 +113,7 @@ architecture processor_a of processor is
     -- signals.
     -- program counter signals
     signal pc_adress_out_s: unsigned(6 downto 0);
-    signal pc_increment_s: unsigned(6 downto 0);
+    signal pc_increment_s: unsigned(7 downto 0);
 
     -- control unit signals
     signal pc_wr_s: std_logic;
@@ -283,9 +283,10 @@ architecture processor_a of processor is
     instruction_address_s <= ir_out_s(6 downto 0);
 
     -- pc increment calculation (IMPLEMENT BRANCH HERE)
-    pc_increment_s <=  "0000001" when (jump_sel_s = '0' or nop_sel_s = '1')            else               
-                       (instruction_address_s - pc_adress_out_s) when jump_sel_s = '1' else    --absolute increment 
-                       "0000001";                                                              --default increment -
+    pc_increment_s <=  ir_out_s(7 downto 0) when branch_sel_s = '1'                          else   -- relative increment.
+                       "0" & "0000001" when (jump_sel_s = '0' or nop_sel_s = '1')            else               
+                       "0" & (instruction_address_s - pc_adress_out_s) when jump_sel_s = '1' else    --absolute increment 
+                       "0" & "0000001";                                                              --default increment -
 
     -- output:
     pc_out <= pc_adress_out_s;
