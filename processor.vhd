@@ -277,7 +277,7 @@ architecture processor_a of processor is
         );
     
     -- constant: 
-    cte <= "000000000000" & ir_out_s (3 downto 0);
+    cte <= "00000000" & ir_out_s (7 downto 0);
 
     -- rom instrucion partition
     instruction_address_s <= ir_out_s(6 downto 0);
