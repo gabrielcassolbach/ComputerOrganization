@@ -92,7 +92,7 @@ architecture control_unit_a of control_unit is
 
 
         -- Flags
-        flags_wr_en_s <= '1' when (opcode_s = "0001" and state_s = "01") else '0'; -- CMP instruction
+        flags_wr_en_s <= '1' when ((opcode_s = "0001" and opcode_s = "0100" and opcode_s = "0101") and state_s = "01") else '0'; -- CMP instruction
 
         negative_flag_in_s <= '1' when ula_carry = '1' else '0';
         
