@@ -23,6 +23,11 @@
 
 - NOP
 
+## Memory Access.
+
+- LW -> load.
+- SW -> store.
+
 ## Exemplos
 
 - ADD R1 ---- A <- A+R1
@@ -43,6 +48,8 @@ LI : 0011_dddd_cccccccc
 JMP : 1111_xxxxx_aaaaaaa
 CMP : 0001_xxxx_ssss_xxxx
 JL : 0111_xxxx_llllllll
+LW: 0110_xxddd_aaaaaaa -- Load, dado lido da ram carregado no acumulador.
+SW: 0010_xxddd_aaaaaaa -- Store, dado do acumulador jogado na ram.
 
 ---
 

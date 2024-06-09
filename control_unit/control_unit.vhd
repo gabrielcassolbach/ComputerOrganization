@@ -8,23 +8,22 @@ entity control_unit is
         clk                     : in std_logic;
         rst                     : in std_logic;
         instruction             : in  unsigned (15 downto 0);
-        ula_out                 : in  unsigned (15 downto 0);   -- output of the ULA (NEEDS TO BE IMPLEMENTED)
-        ula_carry               : in  std_logic;                -- carry signal from the ULA (NEEDS TO BE IMPLEMENTED)
+        ula_out                 : in  unsigned (15 downto 0);   -- output of the ULA 
+        ula_carry               : in  std_logic;                -- carry signal from the ULA 
         state                   : out unsigned (1 downto 0);    -- current state
         selin_reg               : out unsigned (2 downto 0);    -- register input selection on register bank
         selout_reg              : out unsigned (2 downto 0);    -- register output selection on register bank
         pc_wr                   : out std_logic;                -- write enable signal for the program counter
         ir_wr                   : out std_logic;                -- write enable signal for the instruction register
         reg_bank_wr             : out std_logic;                -- write enable signal for the register bank
-        acc_wr_en               : out std_logic;                -- write enable signal for the accumulator
-        -- acc_rst                 : out std_logic;               
+        acc_wr_en               : out std_logic;                -- write enable signal for the accumulator         
         mux_cte_acc_out_sel     : out std_logic;                -- control signal for the mux that selects the constant or the accumulator output
-        mux_reg_cte_sel         : out std_logic;                -- control signal for the mux that selects the register bank out or the constant
         ula_sel_op              : out unsigned (2 downto 0);    -- operation selection on the ULA
         ula_in_sel              : out std_logic;                -- control signal for the mux that selects the constant or the register bank out
-        acc_in_sel              : out std_logic;                -- control signal on the mux for the accumulator input
+        acc_in_sel              : out unsigned (1 downto 0);    -- control signal on the mux for the accumulator input
         jump_sel                : out std_logic;                -- jump signal (unconditional jump)(absolute)
-        branch_sel              : out std_logic;                -- branch signal (conditional jump)(relative)(NEEDS TO BE IMPLEMENTED)
+        branch_sel              : out std_logic;                -- branch signal (conditional jump)(relative)
+        ram_wr_en               : out std_logic;
         nop_sel                 : out std_logic                 -- no operation signal
     );
 end control_unit;
@@ -39,6 +38,7 @@ architecture control_unit_a of control_unit is
             state  : out  unsigned(1 downto 0)
         );
     end component;
+
     component reg1bit is
         port(
             clk      : in std_logic;
@@ -88,8 +88,7 @@ architecture control_unit_a of control_unit is
                                                     
         selin_reg <=  instruction (10 downto 8); 
 
-        selout_reg <= instruction (6 downto 4);
-
+        selout_reg <= instruction (10 downto 8) when (opcode_s = "0010" or opcode_s = "0110") else instruction (6 downto 4);
 
         -- Flags
         flags_wr_en_s <= '1' when ((opcode_s = "0001" or opcode_s = "0100" or opcode_s = "0101") and state_s = "01") else '0'; -- CMP instruction
@@ -98,9 +97,6 @@ architecture control_unit_a of control_unit is
         
         zero_flag_in_s <= '1' when ula_out = "000000000000000" else '0';
 
-
-        -- Output signals
-
         -- Write enable signals
         pc_wr <= '1' when state_s = "00" or ((opcode_s = "1111" or (opcode_s = "0111" and negative_flag_out_s = '1')) and state_s = "01") else '0';
 
@@ -108,17 +104,20 @@ architecture control_unit_a of control_unit is
                 
         -- MOV instruction (MOV R3, A) or LI instruction
         reg_bank_wr <= '1' when ((opcode_s  = "1100" and instruction(7 downto 4) = "1000") or opcode_s = "0011") and state_s = "10" else '0';  
-
-        acc_wr_en <= '1' when (opcode_s /= "0011" and state_s = "10" and instruction(7 downto 4) /= "1000" and opcode_s /= "0001"  and opcode_s /= "0111") else '0'; 
+                                                                                                                                                            -- sw ...
+        acc_wr_en <= '1' when (opcode_s /= "0011" and state_s = "10" and instruction(7 downto 4) /= "1000" and opcode_s /= "0001"  and opcode_s /= "0111" and opcode_s /= "0010") else '0'; 
         
-
         -- selectors for the muxes
-        acc_in_sel <= '1' when (instruction (11 downto 8) = "1000" or (opcode_s = "0100") or (opcode_s = "0101"))  else '0';  
+        acc_in_sel <= "01" when (instruction (11 downto 8) = "1000" or (opcode_s = "0100") or (opcode_s = "0101")) else 
+                      "10" when (opcode_s = "0110") else -- lw = 0110
+                      "00";  
         
         ula_in_sel <= '1' when (opcode_s = "1100" or opcode_s = "0100" or opcode_s = "0101" or opcode_s = "0001") else '0'; 
         
         mux_cte_acc_out_sel <= '0' when (opcode_s = "0011") else '1';
         
+        -- ram control: -- when sw instruction and decode state.
+        ram_wr_en <= '1' when (opcode_s = "0010") and state_s = "01" else '0';
 
         -- Instruction selection
         jump_sel <= '1' when opcode_s = "1111" else '0'; -- inconditional jump (absolute)
