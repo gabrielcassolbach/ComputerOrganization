@@ -88,7 +88,7 @@ architecture control_unit_a of control_unit is
                                                     
         selin_reg <=  instruction (10 downto 8); 
 
-        selout_reg <= instruction (10 downto 8) when (opcode_s = "0010") else instruction (6 downto 4);
+        selout_reg <= instruction (10 downto 8) when (opcode_s = "0010" or opcode_s = "0110") else instruction (6 downto 4);
 
         -- Flags
         flags_wr_en_s <= '1' when (opcode_s = "0001" and state_s = "01") else '0'; -- CMP instruction
@@ -104,12 +104,12 @@ architecture control_unit_a of control_unit is
                 
         -- MOV instruction (MOV R3, A) or LI instruction
         reg_bank_wr <= '1' when ((opcode_s  = "1100" and instruction(7 downto 4) = "1000") or opcode_s = "0011") and state_s = "10" else '0';  
-
-        acc_wr_en <= '1' when (opcode_s /= "0011" and state_s = "10" and instruction(7 downto 4) /= "1000" and opcode_s /= "0001"  and opcode_s /= "0111") else '0'; 
+                                                                                                                                                            -- sw ...
+        acc_wr_en <= '1' when (opcode_s /= "0011" and state_s = "10" and instruction(7 downto 4) /= "1000" and opcode_s /= "0001"  and opcode_s /= "0111" and opcode_s /= "0010") else '0'; 
         
         -- selectors for the muxes
         acc_in_sel <= "01" when (instruction (11 downto 8) = "1000" or (opcode_s = "0100") or (opcode_s = "0101")) else 
-                      "10" when (instruction (11 downto 8) = "0110") else -- lw = 0110
+                      "10" when (opcode_s = "0110") else -- lw = 0110
                       "00";  
         
         ula_in_sel <= '1' when (opcode_s = "1100" or opcode_s = "0100" or opcode_s = "0101" or opcode_s = "0001") else '0'; 
@@ -117,7 +117,7 @@ architecture control_unit_a of control_unit is
         mux_cte_acc_out_sel <= '0' when (opcode_s = "0011") else '1';
         
         -- ram control: -- when sw instruction and decode state.
-        ram_wr_en <= '1' when (opcode_s = "0010" or opcode_s = "0110") and state_s = "01" else '0';
+        ram_wr_en <= '1' when (opcode_s = "0010") and state_s = "01" else '0';
 
         -- Instruction selection
         jump_sel <= '1' when opcode_s = "1111" else '0'; -- inconditional jump (absolute)

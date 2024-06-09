@@ -306,7 +306,7 @@ architecture processor_a of processor is
     
     -- ram:
     ram_data_in_s <= acc_out_s; -- saída do acumulador ligada na entrada da RAM.
-    ram_address_s <= mux_cte_regs_input_b_s (6 downto 0);
+    ram_address_s <= mux_cte_regs_input_b_s (6 downto 0);  
 
     -- constant: 
     cte <= "00000000" & ir_out_s (7 downto 0);
