@@ -92,7 +92,7 @@ architecture control_unit_a of control_unit is
 
 
         -- Flags
-        flags_wr_en_s <= '1' when ((opcode_s = "0001" and opcode_s = "0100" and opcode_s = "0101") and state_s = "01") else '0'; -- CMP instruction
+        flags_wr_en_s <= '1' when ((opcode_s = "0001" or opcode_s = "0100" or opcode_s = "0101") and state_s = "01") else '0'; -- CMP instruction
 
         negative_flag_in_s <= '1' when ula_carry = '1' else '0';
         
@@ -102,7 +102,7 @@ architecture control_unit_a of control_unit is
         -- Output signals
 
         -- Write enable signals
-        pc_wr <= '1' when state_s = "00" or ((opcode_s = "1111" ) and state_s = "01") else '0';
+        pc_wr <= '1' when state_s = "00" or ((opcode_s = "1111" or (opcode_s = "0111" and negative_flag_out_s = '1')) and state_s = "01") else '0';
 
         ir_wr <= '1' when state_s = "00" else '0';
                 
@@ -123,7 +123,7 @@ architecture control_unit_a of control_unit is
         -- Instruction selection
         jump_sel <= '1' when opcode_s = "1111" else '0'; -- inconditional jump (absolute)
         
-        branch_sel <= '1' when (opcode_s = "0111" and negative_flag_out_s = '1') else '0'; -- relative jump (inconditional)
+        branch_sel <= '1' when (opcode_s = "0111" and negative_flag_out_s = '1' and state_s /= "00") else '0'; -- relative jump (inconditional)
         
         nop_sel  <= '1' when opcode_s = "0000" else '0'; -- no operation
         
