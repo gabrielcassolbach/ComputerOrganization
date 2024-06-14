@@ -118,7 +118,7 @@ architecture processor_a of processor is
 
     component ram is
     port(   clk      : in std_logic;
-            address : in unsigned(6 downto 0);
+            address  : in unsigned(12 downto 0);
             wr_en    : in std_logic;
             data_in  : in unsigned(15 downto 0);
             data_out : out unsigned(15 downto 0) 
@@ -180,7 +180,7 @@ architecture processor_a of processor is
     signal ula_out_s: unsigned(15 downto 0);
 
     -- ram signals.
-    signal ram_address_s: unsigned(6 downto 0);
+    signal ram_address_s: unsigned(12 downto 0);
     signal ram_wr_en_s: std_logic;
     signal ram_data_in_s: unsigned(15 downto 0); 
     signal ram_data_out_s: unsigned(15 downto 0); 
@@ -306,7 +306,7 @@ architecture processor_a of processor is
     
     -- ram:
     ram_data_in_s <= acc_out_s; -- saída do acumulador ligada na entrada da RAM.
-    ram_address_s <= mux_cte_regs_input_b_s (6 downto 0);  
+    ram_address_s <= mux_cte_regs_input_b_s (12 downto 0);  
 
     -- constant: 
     cte <= "00000000" & ir_out_s (7 downto 0);
