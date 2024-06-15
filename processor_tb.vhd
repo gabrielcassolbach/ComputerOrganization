@@ -19,9 +19,8 @@ architecture tesbench of processor_tb is
         );
     end component;
 
-    constant period_time : time      := 1 ns;
+    constant period_time : time      := 5 ns;
     signal   finished    : std_logic := '0';
-    --signal   clk, reset  : std_logic;
 
     -- signals
     signal clk           : std_logic;
@@ -55,7 +54,7 @@ architecture tesbench of processor_tb is
 
         sim_time_proc: process
         begin
-            wait for 1 ms;         -- <== TEMPO TOTAL DA SIMULAÇÃO!!!
+            wait for 0.8 ms;         -- <== TEMPO TOTAL DA SIMULAÇÃO!!!
             finished <= '1';
             wait;
         end process sim_time_proc;
