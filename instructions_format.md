@@ -44,12 +44,13 @@ MOV : 1100_dddd_ssss_xxxx
 ADD : 0100_xxxx_ssss_xxxx
 SUB : 0101_xxxx_ssss_cccc
 NOP : 0000
-LI : 0011_dddd_cccccccc
+LD  : 0011_dddd_cccccccc
 JMP : 1111_xxxxx_aaaaaaa
 CMP : 0001_xxxx_ssss_xxxx
-JL : 0111_xxxx_llllllll
-LW: 0110_xxddd_aaaaaaa -- Load, dado lido da ram carregado no acumulador.
-SW: 0010_xxddd_aaaaaaa -- Store, dado do acumulador jogado na ram.
+JL  : 0111_xxxx_llllllll
+JE  : 1110_xxxx_llllllll
+LW: : 0110_xxddd_aaaaaaa -- Load, dado lido da ram carregado no acumulador.
+SW: : 0010_xxddd_aaaaaaa -- Store, dado do acumulador jogado na ram.
 
 ---
 
