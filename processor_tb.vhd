@@ -54,7 +54,7 @@ architecture tesbench of processor_tb is
 
         sim_time_proc: process
         begin
-            wait for 0.8 ms;         -- <== TEMPO TOTAL DA SIMULAÇÃO!!!
+            wait for 0.1 ms;         -- <== TEMPO TOTAL DA SIMULAÇÃO!!!
             finished <= '1';
             wait;
         end process sim_time_proc;
